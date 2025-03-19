@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DATA TO IMAGE</title>
 <style>
+  #canvas {
+    image-rendering: pixelated;
+  }
 </style>
   </head>
   <body>
@@ -36,15 +39,28 @@
           0,
           0
         ];
+        let pixelIndex = 0;
 
+        canvas.height = Math.floor((rawBytes.length / 3) / canvas.width) + 1;
         for (let i = 0; i < rawBytes.length; i++) {
           currentColor[i % 3] = rawBytes[i];
 
-          if (i % 3 == 0) {
+          if (i % 3 == 2) {
             ctx.fillStyle = `rgb(${currentColor[0]}, ${currentColor[1]}, ${currentColor[2]})`;
-            ctx.fillRect((i/3) % canvas.width, Math.floor((i/3) / canvas.width), 1, 1);
+            ctx.fillRect(pixelIndex % canvas.width, Math.floor(pixelIndex / canvas.width), 1, 1);
+            pixelIndex++;
           }
         }
+        //deal with overflow
+        pixelIndex++;
+        const remainder = rawBytes.length % 3;
+        if (remainder != 0) {
+          currentColor[2] = 0;
+          if (remainder == 2) currentColor[1] = 0;
+          ctx.fillStyle = `rgb(${currentColor[0]}, ${currentColor[1]}, ${currentColor[2]})`;
+          ctx.fillRect(pixelIndex % canvas.width, Math.floor(pixelIndex / canvas.width), 1, 1);
+        }
+
       }
 
     </script>
