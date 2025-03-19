@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DATA TO IMAGE</title>
+<style>
+</style>
+  </head>
+  <body>
+    <h1>Max data 250, 000 bytes or 250 KB</h1>
+    <textarea id="input"></textarea>
+    <canvas id="canvas"></canvas>
+    <button id="submit-btn">Convert</button>
+
+    <script>
+      const input = document.getElementById("input");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      const submitBtn = document.getElementById("submit-btn");
+
+      // Max data 250, 000 bytes or 250 KB ----> 750KB?
+      canvas.width = 500;
+      canvas.height = 500;
+      
+      const encoder = new TextEncoder();
+
+      submitBtn.onclick = function() {
+        const rawBytes = Array.from(encoder.encode(input.value));
+
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let currentColor = [
+          0,
+          0,
+          0
+        ];
+
+        for (let i = 0; i < rawBytes.length; i++) {
+          currentColor[i % 3] = rawBytes[i];
+
+          if (i % 3 == 0) {
+            ctx.fillStyle = `rgb(${currentColor[0]}, ${currentColor[1]}, ${currentColor[2]})`;
+            ctx.fillRect((i/3) % canvas.width, Math.floor((i/3) / canvas.width), 1, 1);
+          }
+        }
+      }
+
+    </script>
+  </body>
+</html>
